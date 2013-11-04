@@ -1,9 +1,11 @@
 
 %
 %  Constructs a stationary covariance matrix from the stationary
-%  covariance representation cs (see banded_cov_oper) for application to
+%  covariance representation cs (see make_band_cov_oper) for application to
 %  vectors of dimensionality n.  The form of the covariance depends on the
 %  choice of the periodic boundary conditions (bc_func).
+%
+%  note: this is just a convenience function
 %
 %  C = make_stat_cov_matrix(cs, n, bc_func)
 %
@@ -15,7 +17,7 @@
 
 function C = make_stat_cov_matrix(cs, n, bc_func)
     m = length(cs) - 1;
-    Cb = make_band_cov_oper(cs, n);
+    Cb = make_stat_cov_oper(cs, n);
     E = bc_func(eye(n),m);
     C = Cb * E;
 end

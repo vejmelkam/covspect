@@ -3,7 +3,7 @@
 %  Constructs a band matrix representation of a non-stationary covariance
 %  operator that depends on the following parameters.
 %
-%  Cb = banded_nonstat_cov_oper(a,b,g,t,n,m)
+%  Cb = make_nonstat_cov_oper(a,b,g,t,n,m)
 %
 %  a (alpha) - smoothness of covariance function
 %  b (beta)  - variability of smoothness of covariance function with space
@@ -16,7 +16,7 @@
 %  covariance.
 %
 
-function Cb = banded_nonstat_cov_oper(a,b,g,t,n,m)
+function Cb = make_nonstat_cov_oper(a,b,g,t,n,m)
 
     c = n + 2*m;
     w = 2*m+1;
