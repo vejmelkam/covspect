@@ -11,5 +11,5 @@
 function u2 = dct_extend_bc(u,m)
     [n, N] = size(u);
     assert(m < n, 'The extent of the covariance function m must be strictly smaller than the dimensionality of the vector u.');
-    u2 = [ -u(m:-1:2,:); u; zeros(1,N); -u(n:-1:n-m+2,:) ];
+    u2 = [ u(m:-1:1,:); u; u(n:-1:n-m+1,:) ];
 end

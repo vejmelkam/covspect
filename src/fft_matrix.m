@@ -1,6 +1,6 @@
 
 
-function F = make_fft(n)
+function F = fft_matrix(n)
 
     F = zeros(n);
     e = zeros(n,1);

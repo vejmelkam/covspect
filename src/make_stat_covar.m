@@ -15,7 +15,7 @@
 
 function C = make_stat_covar(cs, n, bc_func)
     m = length(cs) - 1;
-    Cb = cov_banded(cs, n);
+    Cb = cov_oper_to_matrix(cs, n);
     E = bc_func(eye(n),m);
-    C = Cb(m+1:m+n,:) * E;
+    C = Cb * E;
 end
