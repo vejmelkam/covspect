@@ -11,11 +11,11 @@
 %% Parameters
 
 clear;
-pn = 100;                     % dimensionality of spaces (no. of grid points)
+pn = 64;                     % dimensionality of spaces (no. of grid points)
 pN = 1:10;                     % ensemble sizes
 iters = 25;                   % number of iterations with each configuration
-cs_parms = [0.5 1 2 5];                % parameters fo cs
-cs_func = @make_cs_exp; % function, which create covariance operator vector
+cs_parms = [0.1 0.5 1 2 5];                % parameters fo cs
+cs_func = @make_cs_exp_alpha; % function, which create covariance operator vector
 
 pmethods = {'DST','DCT','FFT' };  % use the following xforms
 tm_funcs = {@dst_matrix, @dct_matrix, @fft_matrix};
@@ -29,15 +29,19 @@ results=zeros(length(cs_parms),length(pN),length(pmethods),iters,2);
 
 
 for cs_ind = 1:length(cs_parms)
-    cs_parm=cs_parms(cs_ind);
+    cs_parm = cs_parms(cs_ind);
     fprintf('Running experiment for cs parameter = %g\n', cs_parm);
     cs = cs_func(cs_parm);
+    cs = cs(1:min(length(cs),pn-1));
     % spectral covariances
-    Cs={}; 
+    Cs=cell(length(pmethods),1); 
+    Cs_05=cell(length(pmethods),1); 
     normCs=zeros(length(pmethods));
     for t_ind = 1:length(pmethods)
         % true spectral covariances
-        Cs{t_ind}=make_spectral_cov(cs,pn,tm_funcs{t_ind},bc_funcs{t_ind});
+        F = tm_funcs{t_ind}(pn);
+        Cs{t_ind}=F*make_stat_cov_matrix(cs,pn,bc_funcs{t_ind})*F';
+        Cs_05{t_ind}=sqrtm(Cs{t_ind});
         normCs(t_ind)=norm(Cs{t_ind},'fro');
     end 
     for N_ind = 1:length(pN)
@@ -47,7 +51,7 @@ for cs_ind = 1:length(cs_parms)
             Y = randn(pn,N); 
             for t_ind = 1:length(pmethods)
                 Ctrue = Cs{t_ind};
-                X = sqrtm(Ctrue)*Y;
+                X = Cs_05{t_ind}*Y;
                 Csample = 1/N*(X*X');
                 DiagC = diag(diag(Csample));
                 %erros
