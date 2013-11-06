@@ -11,10 +11,10 @@
 %% Parameters
 
 clear;
-pn = 64;                     % dimensionality of spaces (no. of grid points)
-pN = 1:10;                     % ensemble sizes
-iters = 25;                   % number of iterations with each configuration
-cs_parms = [0.1 0.5 1 2 5];                % parameters fo cs
+pn = 256;                            % dimensionality of spaces (no. of grid points)
+pN = 1:4:21;                         % ensemble sizes
+iters = 20;                          % number of iterations with each configuration
+cs_parms = [0.01 0.05 0.1 0.5 1];    % parameters fo cs
 cs_func = @make_cs_exp_alpha; % function, which create covariance operator vector
 
 pmethods = {'DST','DCT','FFT' };  % use the following xforms

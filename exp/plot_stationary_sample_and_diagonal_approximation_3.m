@@ -9,7 +9,11 @@ for cs_ind=1:length(cs_parms)
     subplot(1,length(cs_parms),cs_ind);
     plot(pN,mean(squeeze(results(cs_ind,:,1,:,2)),2),'go-'); hold on;
     plot(pN,mean(squeeze(results(cs_ind,:,2,:,2)),2),'bo-'); 
-    plot(pN,mean(squeeze(results(cs_ind,:,3,:,2)),2),'ro-'); hold off;
+    plot(pN,mean(squeeze(results(cs_ind,:,3,:,2)),2),'ro-');
+    if(size(results,3) > 3)
+        plot(pN,mean(squeeze(results(cs_ind,:,4,:,2)),2),'ko-');
+    end
+    hold off;
     legend(pmethods);
     xlabel('ensemble size')
     ylabel('Cov. est. rel. Frob. error')

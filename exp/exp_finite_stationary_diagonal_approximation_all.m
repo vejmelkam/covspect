@@ -10,34 +10,40 @@ clear;
 
 %% Parameters
 
-pn = 128;                     % dimensionality of spaces (no. of grid points)
-pN = 1:2:10;                  % ensemble sizes
+pn = 512;                     % dimensionality of spaces (no. of grid points)
+pN = 1:4:41;                  % ensemble sizes
 iters = 20;                   % number of iterations with each configuration
-palpha = logspace(-2, 1, 10); % smoothness of covariance function
+cs_parms = [0.01 0.05 0.1 0.5 1];    % parameters fo cs
+cs_func = @make_cs_exp_alpha; % function, which create covariance operator vector
 
 % use the following methods for approximating sample covariance
-% NOTE: 'Sample' MUST be first!
-pmethods = { 'Sample', 'DST', 'DCT', 'FFT', 'Coiflet' };  % use the following xforms
-pxf_funcs = {@(n) error('this should not be called'), @dst_matrix, @dct_matrix, @fft_matrix, @wav_coi_matrix };
+pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet' };  % use the following xforms
+pxf_funcs = { @dst_matrix, @dct_matrix, @fft_matrix, @wav_coi_matrix };
 
 pF = {};
-for i=2:length(pmethods)
+for i=1:length(pmethods)
     f = pxf_funcs{i};
     pF{i} = f(pn);
 end
 
-results = zeros(length(palpha), length(pN), length(pmethods), iters);
+%   errors in each simulation
+%   last dimension stands for error using:
+%   1 - whole sample covariance 
+%   2 - diagonal elements of sample covariance
+results = zeros(length(cs_parms), length(pN), length(pmethods), iters, 2);
 
-for alpha_ndx=1:length(palpha)
-    alpha = palpha(alpha_ndx);
-    fprintf('Running experiment for alpha = %g\n', alpha);
-    cs = exp(-(0:pn-1)*alpha);
+for cs_ndx=1:length(cs_parms)
+    cs_par = cs_parms(cs_ndx);
+    fprintf('Running experiment for cs_par = %g\n', cs_par);
+    cs = cs_func(cs_par);
+    cs = cs(1:min(length(cs),pn));
     C = make_finite_cov_matrix_from_cs(cs,pn);
     if any(eig(C) <= 0)
-        error('Matrix not positive definite for alpha=%g', alpha);
+        error('Matrix not positive definite for cs_par=%g', cs_par);
     end
     norm_C = norm(C, 'fro');
-    C_05 = sqrtm(C);
+    [V,D] = eig(C);
+    C_05 = V*D.^0.5*V';
     for N_ndx=1:length(pN)
         N = pN(N_ndx);
         for iter=1:iters
@@ -45,8 +51,12 @@ for alpha_ndx=1:length(palpha)
             Y = randn(pn,N);
             X = C_05*Y;
             C_N = 1/N*(X*X');
-            results(alpha_ndx, N_ndx, 1, iter) = norm(C_N - C, 'fro') / norm_C;
-            for meth_id=2:length(pmethods)
+            
+            % manually compute the sample covariance approximation and
+            % store it with all of the methods (unchanged by transforms)
+            results(cs_ndx, N_ndx, :, iter, 1) = norm(C_N - C, 'fro') / norm_C;
+            
+            for meth_id=1:length(pmethods)
                 % matrix transforming grid space to spectral/wavelet space
                 F = pF{meth_id};
                 C_F = F*C*F';
@@ -58,7 +68,7 @@ for alpha_ndx=1:length(palpha)
                 D_FN = diag(diag(C_FN));
 
                 % compute errors
-                results(alpha_ndx, N_ndx, meth_id, iter) = norm(D_FN - C_F, 'fro') / norm_C;
+                results(cs_ndx, N_ndx, meth_id, iter, 2) = norm(D_FN - C_F, 'fro') / norm_C;
             end
         end
     end
