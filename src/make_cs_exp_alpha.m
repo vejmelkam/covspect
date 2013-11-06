@@ -9,6 +9,7 @@
 function cs=make_cs_exp_alpha(a)
     cs(1) = 1;
     d=1;
+    assert(a>0,'The parameter a must be strictly positive.');
     cs_d = exp(-a*d);
     while cs_d > 1e-4
         d=d+1;
