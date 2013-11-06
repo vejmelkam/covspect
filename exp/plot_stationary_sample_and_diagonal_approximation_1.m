@@ -1,6 +1,7 @@
 
 %% This is a plotting script for the results of exp_stationary_sample_and_diagonal_approximation
-
+% Ploting relative error of sample and diagonal approximation of covariance
+% of s
 
 for cs_ind=1:length(cs_parms)
     figure('name',['cs parameter: ',num2str(cs_parms(cs_ind))]);
