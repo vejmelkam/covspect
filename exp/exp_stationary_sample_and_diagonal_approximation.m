@@ -11,13 +11,13 @@
 %% Parameters
 
 clear;
-pn = 256;                            % dimensionality of spaces (no. of grid points)
-pN = 1:4:21;                         % ensemble sizes
-iters = 20;                          % number of iterations with each configuration
+pn = 512;                            % dimensionality of spaces (no. of grid points)
+pN = 1:4:31;                         % ensemble sizes
+iters = 50;                          % number of iterations with each configuration
 cs_parms = [0.01 0.05 0.1 0.5 1];    % parameters fo cs
 cs_func = @make_cs_exp_alpha; % function, which create covariance operator vector
 
-pmethods = {'DST','DCT','FFT' };  % use the following xforms
+pmethods = {'DST','DCT','FFT','Analytical' };  % use the following xforms
 tm_funcs = {@dst_matrix, @dct_matrix, @fft_matrix};
 bc_funcs = {@dst_extend_bc, @dct_extend_bc, @fft_extend_bc};
 
@@ -37,7 +37,7 @@ for cs_ind = 1:length(cs_parms)
     Cs=cell(length(pmethods),1); 
     Cs_05=cell(length(pmethods),1); 
     normCs=zeros(length(pmethods));
-    for t_ind = 1:length(pmethods)
+    for t_ind = 1:length(tm_funcs)
         % true spectral covariances
         F = tm_funcs{t_ind}(pn);
         Cs{t_ind}=F*make_stat_cov_matrix(cs,pn,bc_funcs{t_ind})*F';
@@ -49,15 +49,16 @@ for cs_ind = 1:length(cs_parms)
         for iter_ind = 1:iters
             % Y ~ N(0,I), ens. members in columns
             Y = randn(pn,N); 
-            for t_ind = 1:length(pmethods)
+            for t_ind = 1:length(tm_funcs)
                 Ctrue = Cs{t_ind};
                 X = Cs_05{t_ind}*Y;
                 Csample = 1/N*(X*X');
                 DiagC = diag(diag(Csample));
                 %erros
-                results(cs_ind,N_ind,t_ind,iter_ind,1)=norm(Ctrue-Csample,'fro')/normCs(t_ind);
-                results(cs_ind,N_ind,t_ind,iter_ind,2)=norm(Ctrue-DiagC,'fro')/normCs(t_ind);
+                results(cs_ind,N_ind,t_ind,iter_ind,1)=norm(Ctrue-Csample,'fro')^2/normCs(t_ind)^2;
+                results(cs_ind,N_ind,t_ind,iter_ind,2)=norm(Ctrue-DiagC,'fro')^2/normCs(t_ind)^2;
             end
+            results(cs_ind,N_ind,4,iter_ind,:) = 2.0/N;
         end
     end
 end
