@@ -7,7 +7,7 @@
 %
 %  note: this is just a convenience function
 %
-%  C = make_nonstat_cov_matrix(cs, n, bc_func)
+%  C = make_nonstat_cov_matrix(a,b,g,t,n,m)
 %
 %  a (alpha) - smoothness of covariance function
 %  b (beta)  - variability of smoothness of covariance function with space
@@ -18,7 +18,7 @@
 %  bc_func - the function used to periodically extend the vectors (must
 %       match choice of basis vectors - dst,dct,fft)
 
-function C = make_nonstat_cov_matrix(a,b,g,t,n,m,bc_func)
+function C = make_nonstat_cov_matrix(a,b,g,t,n,m)
     Cb = make_nonstat_cov_oper(a,b,g,t,n,m);
     E = bc_func(eye(n),m);
     C = Cb * E;

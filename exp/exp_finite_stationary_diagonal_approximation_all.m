@@ -10,7 +10,7 @@ clear;
 
 %% Parameters
 
-pn = 2.^(4:9);                 % dimensionality of spaces (no. of grid points)
+pn = 2.^(4:10);                 % dimensionality of spaces (no. of grid points)
 pN = 1:4:31;                   % ensemble sizes
 iters = 20;                    % number of iterations with each configuration
 cs_parms = [0.01 0.1 1 10];    % parameters fo cs
