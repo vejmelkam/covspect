@@ -7,7 +7,7 @@
 %
 %  note: this is just a convenience function
 %
-%  C = make_stat_cov_matrix(cs, n, bc_func)
+%  C = make_nonstat_cov_matrix(cs, n, bc_func)
 %
 %  a (alpha) - smoothness of covariance function
 %  b (beta)  - variability of smoothness of covariance function with space
