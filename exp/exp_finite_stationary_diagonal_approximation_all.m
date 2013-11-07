@@ -80,6 +80,10 @@ for n_ndx=1:length(pn)
                     % compute errors
                     results(n_ndx, cs_ndx, N_ndx, meth_id, iter, 2) = norm(D_FN - C_F, 'fro')^2 / norm_C^2;
                 end
+                
+                % append analytical prediction (that however assumes a
+                % boundary-condition extended domain)
+                
                 results(n_ndx,cs_ndx,N_ndx,5,iter,1:2) = 2.0/N;
             end
         end
