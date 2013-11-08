@@ -32,8 +32,7 @@ function XA=enkf(XF,H,d,r,f_cov_est)
     
     % Kalman gain matrix
     M = (H * QF * H' + R);
-    Mi = inv(M);
-    K = QF*H*Mi;
+    K = QF*H/M;
     
     % Analysis
     XA=XF+K*(D-H*XF);
