@@ -6,15 +6,6 @@
 %  spaces, such as the Fourier, DST, ... or wavelet spaces in 1D.
 %
 %
-clear;
-
-%% Parameters
-
-pn = 2.^(4:7);                % dimensionality of spaces (no. of grid points)
-pN = 1:4:21;                   % ensemble sizes
-iters = 20;                   % number of iterations with each configuration
-cs_parms = [0.01 0.1 1 10];          % parameters fo cs
-cs_func = @make_cs_exp_alpha; % function, which create covariance operator vector
 
 % use the following methods for approximating sample covariance
 pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet', 'Analytical (stat)' };  % use the following xforms

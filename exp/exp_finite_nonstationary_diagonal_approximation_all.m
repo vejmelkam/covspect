@@ -6,22 +6,21 @@
 %  spaces, such as the Fourier, DST, ... or wavelet spaces in 1D.
 %
 %
-clear;
 
 %% Parameters
-
-pn = 2.^(5:7);                  % dimensionality of spaces (no. of grid points)
-%pn = 2.^7;                   % dimensionality of spaces (no. of grid points)
-pN = 1:2:15;                  % ensemble sizes
-iters = 30;                   % number of iterations with each configuration
-a = 1.0;
-b = 4.0;
-t1 = 0.0;
-g = 4.0;
-t2 = 2.0;
-cs_parms = [1 5 8];               % range for modified parameter
-make_cov_func = @(x,n) make_finite_cov_matrix(a,b,t1,x,t2,n,n);
-show_matrix = 0;
+% clear
+% %pn = 2.^(5:7);               % dimensionality of spaces (no. of grid points)
+% pn = 2.^7;                    % dimensionality of spaces (no. of grid points)
+% pN = 1:4:31;                  % ensemble sizes
+% iters = 30;                   % number of iterations with each configuration
+% a = 1.0;
+% b = 4.0;
+% t1 = 0.0;
+% g = 4.0;
+% t2 = 2.0;
+% cs_parms = [1 5 8];               % range for modified parameter
+% make_cov_func = @(x,n) make_finite_cov_matrix(a,b,t1,x,t2,n,n);
+% show_matrix = 0;
 
 % use the following methods for approximating sample covariance
 pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet', 'Beylkin', 'Analytical (stat)' };  % use the following xforms
