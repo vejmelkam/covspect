@@ -12,8 +12,8 @@ for n_ndx=1:length(pn)
         plot(pN, mean(squeeze(results(n_ndx,cs_ndx,:,2,:,2)),2), 'bo-');
         plot(pN, mean(squeeze(results(n_ndx,cs_ndx,:,3,:,2)),2), 'ko-');
         plot(pN, mean(squeeze(results(n_ndx,cs_ndx,:,4,:,2)),2), 'mo-');
-        plot(pN, mean(squeeze(results(n_ndx,cs_ndx,:,5,:,2)),2), 'co-'); hold off;
-        legend([{'Sample'} pmethods(1:5)]);
+        plot(pN, mean(squeeze(results(n_ndx,cs_ndx,:,5,:,2)),2), 'co-');
+        legend([{'Sample'} pmethods(1:6)]);
         xlabel('Ensemble size [-]');
         ylabel('Cov. estimate Frobenius error');
         title(sprintf('Alpha parameters %g - Sample cov. ', cs_par));

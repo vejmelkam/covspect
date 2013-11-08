@@ -7,7 +7,7 @@
 function W = wav_coi_matrix(n)
     qmf = MakeONFilter('Coiflet',2);
     W=zeros(n);
-    L = 2;
+    L = 4;
     for i=1:n
         e=zeros(n,1); 
         e(i)=1; 

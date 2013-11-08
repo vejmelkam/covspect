@@ -24,8 +24,8 @@ make_cov_func = @(x,n) make_finite_cov_matrix(a,b,t1,x,t2,n,n);
 show_matrix = 0;
 
 % use the following methods for approximating sample covariance
-pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet', 'Analytical (stat)' };  % use the following xforms
-pxf_funcs = { @dst_matrix, @dct_matrix, @fft_matrix, @wav_coi_matrix };
+pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet', 'Beylkin', 'Analytical (stat)' };  % use the following xforms
+pxf_funcs = { @dst_matrix, @dct_matrix, @fft_matrix, @(n) wav_matrix(n,3,'Coiflet',3), @(n) wav_matrix(n,3,'Beylkin',1) };
 
 %   errors in each simulation
 %   last dimension stands for error using:
@@ -110,7 +110,7 @@ for n_ndx=1:length(pn)
                 % append analytical prediction (that however assumes a
                 % boundary-condition extended domain)
                 
-                results(n_ndx,cs_ndx,N_ndx,5,iter,1:2) = 2.0/N;
+                results(n_ndx,cs_ndx,N_ndx,end,iter,1:2) = 2.0/N;
             end
         end
     end

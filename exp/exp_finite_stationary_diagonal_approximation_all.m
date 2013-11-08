@@ -18,7 +18,7 @@ cs_func = @make_cs_exp_alpha; % function, which create covariance operator vecto
 
 % use the following methods for approximating sample covariance
 pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet', 'Analytical (stat)' };  % use the following xforms
-pxf_funcs = { @dst_matrix, @dct_matrix, @fft_matrix, @wav_coi_matrix };
+pxf_funcs = { @dst_matrix, @dct_matrix, @fft_matrix, @(n) wav_matrix(n,4,'Beylkin',1) };
 
 %   errors in each simulation
 %   last dimension stands for error using:
