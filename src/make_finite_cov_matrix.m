@@ -6,7 +6,7 @@
 %  particular spectral transform.  A function that constructs the band
 %  operator 
 %
-%  CC = make_finite_cov_oper(a,b,g,t,n,m)
+%  CC = make_finite_cov_matrix(a,b,g,t,n,m)
 %
 %  a (alpha) - smoothness of covariance function
 %  b (beta)  - variability of smoothness of covariance function with space
@@ -19,13 +19,13 @@
 %  covariance.
 %
 
-function C = make_finite_cov_matrix(a,b,g,t,n,m)
+function C = make_finite_cov_matrix(a,b,t1,g,t2,n,m)
 
     C = zeros(n);
     
     for i=1:n
-        var_i = (1 + g + g*sin(pi*t*i/n));
-        smooth_i = (1 + b + b*sin(pi*i/n));
+        smooth_i = 1 + b + b*sin(pi*t1*(i-1)/n);
+        var_i = 1 + g + g*sin(pi*t2*(i-1)/n);
         for j=i:min(i+m-1,n)
             c_ij = var_i * exp(-abs(j-i)^a/smooth_i);
             C(j,i) = c_ij;

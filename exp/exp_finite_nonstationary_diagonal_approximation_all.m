@@ -1,8 +1,8 @@
 
 %% Explanation
 %
-%  This experiment looks at diagonal approximations of various stationary
-%  covariance matrices (DISREGARDING boundary conditions) in various
+%  This experiment looks at diagonal approximations of various
+%  non-stationary covariance matrices (DISREGARDING boundary conditions) in various
 %  spaces, such as the Fourier, DST, ... or wavelet spaces in 1D.
 %
 %
@@ -10,11 +10,18 @@ clear;
 
 %% Parameters
 
-pn = 2.^(4:7);                % dimensionality of spaces (no. of grid points)
-pN = 1:4:21;                   % ensemble sizes
-iters = 20;                   % number of iterations with each configuration
-cs_parms = [0.01 0.1 1 10];          % parameters fo cs
-cs_func = @make_cs_exp_alpha; % function, which create covariance operator vector
+pn = 2.^(5:7);                  % dimensionality of spaces (no. of grid points)
+%pn = 2.^7;                   % dimensionality of spaces (no. of grid points)
+pN = 1:2:15;                  % ensemble sizes
+iters = 30;                   % number of iterations with each configuration
+a = 1.0;
+b = 4.0;
+t1 = 0.0;
+g = 4.0;
+t2 = 2.0;
+cs_parms = [1 5 8];               % range for modified parameter
+make_cov_func = @(x,n) make_finite_cov_matrix(a,b,t1,x,t2,n,n);
+show_matrix = 0;
 
 % use the following methods for approximating sample covariance
 pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet', 'Analytical (stat)' };  % use the following xforms
@@ -37,9 +44,7 @@ for n_ndx=1:length(pn)
     for cs_ndx=1:length(cs_parms)
         cs_par = cs_parms(cs_ndx);
         fprintf('  running experiment for cs_par = %g\n', cs_par);
-        cs = cs_func(cs_par);
-        cs = cs(1:min(length(cs),n));
-        C = make_finite_cov_matrix_from_cs(cs,n);
+        C = make_cov_func(cs_par, n);
         if any(eig(C) <= 0)
             error('Matrix not positive definite for cs_par=%g', cs_par);
         end
@@ -69,11 +74,28 @@ for n_ndx=1:length(pn)
                     C_FN = F*C_N*F';
 
                     % diagonalize
-%                     M = triu(ones(n)) - triu(ones(n), 2);
-%                     M = M + M' - eye(n);
-%                     D_FN = C_FN .* M;
-
                     D_FN = diag(diag(C_FN));
+%                     M = eye(n);
+%                     for x=1:4
+%                         for y=1:4
+%                             M(x,y) = 1;
+%                         end
+%                     end
+%                     D_FN = C_FN .* M;
+                    
+                    % reverse transformation
+                    if(show_matrix)
+                        min(eig(D_FN))
+                        D_N = F'*D_FN*F;
+                        if(meth_id ~= 3 && iter==1)
+                            figure;
+                            subplot(121);
+                            mesh(C);
+                            subplot(122);
+                            mesh(D_N);
+                            title(pmethods{meth_id});
+                        end
+                    end
                     
                     % compute Frob norm of off-diagonal elements
                     results(n_ndx,cs_ndx,N_ndx,meth_id,iter,3) = norm(C_F - D_F, 'fro')^2 / norm_C^2;
@@ -82,7 +104,7 @@ for n_ndx=1:length(pn)
                     results(n_ndx,cs_ndx,N_ndx,meth_id,iter,4) = norm(D_FN - D_F, 'fro')^2 / norm_C^2;
 
                     % compute errors
-                    results(n_ndx, cs_ndx, N_ndx, meth_id, iter, 2) = norm(D_FN - C_F, 'fro')^2 / norm_C^2;
+                    results(n_ndx,cs_ndx,N_ndx,meth_id,iter,2) = norm(D_FN - C_F, 'fro')^2 / norm_C^2;
                 end
                 
                 % append analytical prediction (that however assumes a
