@@ -1,5 +1,5 @@
 
-function [XA,YA] = enkf_lorenz96(n,N,f_cov_est)
+function [XA,YA] = enkf_lorenz96(n,N,nsteps,f_cov_est)
 
     % observation operator
     H=eye(n);
@@ -14,8 +14,6 @@ function [XA,YA] = enkf_lorenz96(n,N,f_cov_est)
     % initial model state & observations
     Xinit = rand(n,1)*0.001-0.0005;
     Yinit = rand(n,1)*0.001-0.0005;
-    % number of assimilation runs
-    nar = 100;
     % assimilation time
     at=100;
 
@@ -30,12 +28,11 @@ function [XA,YA] = enkf_lorenz96(n,N,f_cov_est)
     Y=Yinit;
 
     %  mean analysis ensemble after data assimilation
-    XA=zeros(n,nar);
+    XA=zeros(n,nsteps);
     %  obesrvation at assimilated time
-    YA=zeros(n,nar);
+    YA=zeros(n,nsteps);
 
-    for ar_ind = 1:nar
-        fprintf('analysis step  %g of %d\n', ar_ind,nar);
+    for ar_ind = 1:nsteps
         X=enkf(X,H,Y,r,f_cov_est);
         XA(:,ar_ind)=mean(X,2);
         YA(:,ar_ind)=Y;

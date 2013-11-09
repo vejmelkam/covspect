@@ -11,8 +11,8 @@
 %%
 
 function Q=cov_xform(XF,F,M)
-C=cov(XF');
-CF=F*C*F';
-Q=CF.*M;
-Q=F'*Q*F;
+    C=cov(XF');
+    CF=F*C*F';
+    Q=CF.*M;
+    Q=real(F'*Q*F);
 end

@@ -7,12 +7,12 @@ pn = 2.^7;                    % dimensionality of spaces (no. of grid points)
 pN = 1:4:29;                  % ensemble sizes
 iters = 30;                   % number of iterations with each configuration
 a = 1.0;
-b = 4.0;
-t1 = 0.0;
+b = 0.0;
+e1 = 0.0;
 %g = 4.0;
-t2 = 2.0;
+e2 = [40];
 cs_parms = [1 2 4 8 16 32];               % range for modified parameter
-make_cov_func = @(x,n) make_finite_cov_matrix(a,b,t1,x,t2,n,n);
+make_cov_func = @(x,n) make_finite_cov_matrix(a,b,e1,x,e2,n,n);
 show_matrix = 0;
 
 % run the standard experiment
@@ -41,12 +41,12 @@ pn = 2.^7;                    % dimensionality of spaces (no. of grid points)
 pN = 1:4:29;                  % ensemble sizes
 iters = 30;                   % number of iterations with each configuration
 a = 1.0;
-%b = 4.0;
-t1 = 2.0;
-g = 0.0;
-t2 = 0.0;
-cs_parms = [1 5 10 15 20 25];    % range for modified parameter
-make_cov_func = @(x,n) make_finite_cov_matrix(a,x,t1,g,t2,n,n);
+%b = 0.0;
+e1 = [30];
+g = 0;
+e2 = 0;
+cs_parms = 1:4:11;           % range for modified parameter
+make_cov_func = @(x,n) make_finite_cov_matrix(a,x,e1,g,e2,n,n/4);
 show_matrix = 0;
 
 % run the standard experiment
