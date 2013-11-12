@@ -1,4 +1,4 @@
-function [H,X,Y]=waterwave(H,X,Y,dt,)
+function [Hf,Uf,Vf]=waterwave(Hs,Us,Vs,dt,dx,dy,nsteps)
 % WATERWAVE   2D Shallow Water Model
 %
 % Lax-Wendroff finite difference method.
@@ -19,57 +19,32 @@ function [H,X,Y]=waterwave(H,X,Y,dt,)
 %   originally written by J. Mandel
 %%
 %
-%   
+%  
+%
+%
+%   Hs          water height
+%   Us          X momentum
+%   Vs          Y momentum
+%   dt          timestep
+%   dx          
+%   dy
+%   nsteps      number of time steps
 
-
-
-
-
-% Parameters
-
-n = 64;                  % grid size
-g = 9.8;                 % gravitational constant
-dt = 0.01;               % hardwired timestep
-dx = 1.0;
-dy = 1.0;
-nplotstep = 8;           % plot interval
-ndrops = 20;              % maximum number of drops
-dropstep = 200;          % drop interval
-D = droplet(1.5,21);     % simulate a water drop
-
-% Initialize graphics
-
-[surfplot,top,start,stop] = initgraphics(n);
-
-% Outer loop, restarts.
-
-while get(stop,'value') == 0
-   set(start,'value',0)
-   
-%   H = ones(n+2,n+2);   U = zeros(n+2,n+2);  V = zeros(n+2,n+2);
+   g = 9.8;                 % gravitational constant
+   n = size(Hs,1);          %grid size, must by n x n
+   % extend state variables for boundary conditions
+   H = ones(n+2,n+2); U = zeros(n+2,n+2);  V = zeros(n+2,n+2);
    Hx = zeros(n+1,n+1); Ux = zeros(n+1,n+1); Vx = zeros(n+1,n+1);
    Hy = zeros(n+1,n+1); Uy = zeros(n+1,n+1); Vy = zeros(n+1,n+1);
-   ndrop = ceil(rand*ndrops);
-   nstep = 0;
+    
+   H(2:n+1,2:n+1)=Hs;U(2:n+1,2:n+1)=Us;V(2:n+1,2:n+1)=Vs;
 
-   % Inner loop, time steps.
-
-   while get(start,'value')==0 && get(stop,'value')==0
-       nstep = nstep + 1;
-
-       % Random water drops
-       if mod(nstep,dropstep) == 0 && nstep <= ndrop*dropstep
-           w = size(D,1);
-           i = ceil(rand*(n-w))+(1:w);
-           j = ceil(rand*(n-w))+(1:w);
-           H(i,j) = H(i,j) + rand*D;
-       end
-     
+   for step = 1:nsteps   
        % Reflective boundary conditions
-       H(:,1) = H(:,2);      U(:,1) = U(:,2);       V(:,1) = -V(:,2);
-       H(:,n+2) = H(:,n+1);  U(:,n+2) = U(:,n+1);   V(:,n+2) = -V(:,n+1);
-       H(1,:) = H(2,:);      U(1,:) = -U(2,:);      V(1,:) = V(2,:);
-       H(n+2,:) = H(n+1,:);  U(n+2,:) = -U(n+1,:);  V(n+2,:) = V(n+1,:);
+       H(:,1) = H(:,2);U(:,1) = U(:,2); V(:,1) = -V(:,2);
+       H(:,n+2) = H(:,n+1);U(:,n+2) = U(:,n+1);V(:,n+2) = -V(:,n+1);
+       H(1,:) = H(2,:);U(1,:) = -U(2,:);V(1,:) = V(2,:);
+       H(n+2,:) = H(n+1,:);U(n+2,:) = -U(n+1,:);V(n+2,:) = V(n+1,:);
 
        % First half step
    
@@ -123,17 +98,12 @@ while get(stop,'value') == 0
                          (Ux(i-1,j-1).*Vx(i-1,j-1)./Hx(i-1,j-1))) ...
                        - (dt/dy)*((Vy(i-1,j).^2./Hy(i-1,j) + g/2*Hy(i-1,j).^2) - ...
                          (Vy(i-1,j-1).^2./Hy(i-1,j-1) + g/2*Hy(i-1,j-1).^2));
-   
-       % Update plot
-       if mod(nstep,nplotstep) == 0
-          C = abs(U(i,j)) + abs(V(i,j));  % Color shows momemtum
-          t = nstep*dt;
-          tv = norm(C,'fro');
-          set(surfplot,'zdata',H(i,j),'cdata',C);
-          set(top,'string',sprintf('t = %6.2f,  tv = %6.2f',t,tv))
-          drawnow
+         
+       if all(all(isnan(H)))
+        error('Model unstable.');
        end
-      
-       if all(all(isnan(H))), break, end  % Unstable, restart
    end
-end
+   Hf=H(2:n+1,2:n+1);
+   Uf=U(2:n+1,2:n+1);
+   Vf=V(2:n+1,2:n+1);
+ end
