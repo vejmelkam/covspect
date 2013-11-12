@@ -35,9 +35,9 @@ function [XA,YA,ZA] = enkf2d_wwave(n,N,nsteps,f_cov_est)
     [Hz,Uz,Vz] = waterwave(Hz,Uz,Vz,dt,dx,dy,init_steps);
     
     % construct an ensemble of wave models
-    HX=repmat(Hz,1,1,N)+randn(n,n,N)*0.1    ;
-    UX=repmat(Uz,1,1,N);
-    VX=repmat(Vz,1,1,N);
+    HX=repmat(Hz,[1 1 N])+randn(n,n,N)*0.1    ;
+    UX=repmat(Uz,[1 1 N]);
+    VX=repmat(Vz,[1 1 N]);
 
     %  mean analysis ensemble after data assimilation
     XA=zeros(n,n,nsteps);
