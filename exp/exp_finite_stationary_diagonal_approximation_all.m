@@ -11,6 +11,7 @@
 pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet', 'Analytical (stat)' };  % use the following xforms
 pxf_funcs = { @dst_matrix, @dct_matrix, @fft_matrix, @(n) wav_matrix(n,4,'Beylkin',1) };
 
+
 %   errors in each simulation
 %   last dimension stands for error using:
 %   1 - whole sample covariance 
@@ -20,9 +21,12 @@ results = zeros(length(pn), length(cs_parms), length(pN), length(pmethods), iter
 for n_ndx=1:length(pn)
     n = pn(n_ndx);
     pF = {};
+    M = {};
     for i=1:length(pxf_funcs)
         f = pxf_funcs{i};
         pF{i} = f(n);
+        f = mask_funcs{i};
+        M{i} = f(n);
     end
     fprintf('Running experiment for n = %d\n', n);
     for cs_ndx=1:length(cs_parms)
@@ -64,7 +68,7 @@ for n_ndx=1:length(pn)
 %                     M = M + M' - eye(n);
 %                     D_FN = C_FN .* M;
 
-                    D_FN = diag(diag(C_FN));
+                    D_FN = M{meth_id} .* C_FN;
                     
                     % compute Frob norm of off-diagonal elements
                     results(n_ndx,cs_ndx,N_ndx,meth_id,iter,3) = norm(C_F - D_F, 'fro')^2 / norm_C^2;

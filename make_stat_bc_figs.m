@@ -6,6 +6,8 @@ pN = 1:4:31;                         % ensemble sizes
 iters = 50;                          % number of iterations with each configuration
 cs_parms = [0.1 1 10];               % parameters fo cs
 cs_func = @make_cs_exp_alpha;        % function, which create covariance operator vector
+mask_funcs = { @(n) eye(n), @(n) eye(n), @(n) eye(n), @(n) eye(n) };  
+
 
 % run the standard experiment
 exp_stationary_sample_and_diagonal_approximation
@@ -26,13 +28,13 @@ print -dpng 'stationary_bc_pn128_vs_N_without_sample_alpha.png'
 close all
 
 
-
 clear;
 pn = 128;                            % dimensionality of spaces (no. of grid points)
 pN = 1:4:31;                         % ensemble sizes
 iters = 50;                          % number of iterations with each configuration
 cs_parms = [0.5 1 2 4];              % parameters fo cs
 cs_func = @make_cs_exp_beta;         % function, which create covariance operator vector
+mask_funcs = { @(n) eye(n), @(n) eye(n), @(n) eye(n), @(n) eye(n) };  
 
 % run the standard experiment
 exp_stationary_sample_and_diagonal_approximation
@@ -59,6 +61,8 @@ pN = 1:4:31;                         % ensemble sizes
 iters = 50;                          % number of iterations with each configuration
 cs_parms = [1 2 4 8 16 32 64];                   % parameters fo cs
 cs_func = @make_cs_triangle;         % function, which create covariance operator vector
+mask_funcs = { @(n) eye(n), @(n) eye(n), @(n) eye(n), @(n) eye(n) };  
+
 
 % run the standard experiment
 exp_stationary_sample_and_diagonal_approximation

@@ -22,10 +22,6 @@
 % make_cov_func = @(x,n) make_finite_cov_matrix(a,b,t1,x,t2,n,n);
 % show_matrix = 0;
 
-% use the following methods for approximating sample covariance
-pmethods = { 'DST', 'DCT', 'FFT', 'Coiflet', 'Beylkin', 'Analytical (stat)' };  % use the following xforms
-pxf_funcs = { @dst_matrix, @dct_matrix, @fft_matrix, @(n) wav_matrix(n,3,'Coiflet',3), @(n) wav_matrix(n,3,'Beylkin',1) };
-
 %   errors in each simulation
 %   last dimension stands for error using:
 %   1 - whole sample covariance 
@@ -35,9 +31,12 @@ results = zeros(length(pn), length(cs_parms), length(pN), length(pmethods), iter
 for n_ndx=1:length(pn)
     n = pn(n_ndx);
     pF = {};
+    M = {};
     for i=1:length(pxf_funcs)
         f = pxf_funcs{i};
         pF{i} = f(n);
+        f = mask_funcs{i};
+        M{i} = f(n);
     end
     fprintf('Running experiment for n = %d\n', n);
     for cs_ndx=1:length(cs_parms)
@@ -73,14 +72,7 @@ for n_ndx=1:length(pn)
                     C_FN = F*C_N*F';
 
                     % diagonalize
-                    D_FN = diag(diag(C_FN));
-%                     M = eye(n);
-%                     for x=1:4
-%                         for y=1:4
-%                             M(x,y) = 1;
-%                         end
-%                     end
-%                     D_FN = C_FN .* M;
+                    D_FN = M{meth_id} .* C_FN;
                     
                     % reverse transformation
                     if(show_matrix)
