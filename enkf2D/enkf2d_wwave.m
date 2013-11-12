@@ -3,6 +3,7 @@ function [XA,YA,ZA] = enkf2d_wwave(n,N,nsteps,f_cov_est)
 
     % observation operator (applied to the unrolled state!)
     H=eye(n*n);
+    H(n+1:end,n+1:end) = 0;
     % variance of observation
     r=0.01*ones(size(H,1),1);
     % integration time-step for water model
@@ -45,6 +46,11 @@ function [XA,YA,ZA] = enkf2d_wwave(n,N,nsteps,f_cov_est)
     ZA=zeros(n,n,nsteps);
 
     for ar_ind = 1:nsteps
+        
+        fprintf('.');
+        if mod(ar_ind,50) == 0
+            fprintf('\n');
+        end
         
         % perform an ENKF step and store mean ensemble state
         HX=enkf2d(HX,H,H*Hy(:),r,f_cov_est);
