@@ -48,7 +48,7 @@ function [XA,YA,ZA] = enkf2d_wwave(n,N,nsteps,f_cov_est)
     for ar_ind = 1:nsteps
         
         fprintf('.');
-        if mod(ar_ind,50) == 0
+        if mod(ar_ind,20) == 0
             fprintf('\n');
         end
         
