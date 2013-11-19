@@ -2,16 +2,14 @@
 % Unpacks the state of the water wave model from one column X
 % into the variables H,U,V.
 %
-% [H,U,V] = unpack_state(X)
+% Y = unpack_state(X,n)
+%   X - packed state
+%   n - dimension of 2D spatial field
+%
 %
 
-function [H,U,V] = unpack_state(X)
-    3n2 = size(X,1);
-    n = sqrt(3n2/3);
-    H = zeros(n);
-    H(:) = X(1:n*n);
-    U = zeros(n);
-    U(:) = X(n*n+1:n*n*2);
-    V = zeros(n);
-    V(:) = X(n*n*2+1:n*n*3);
+function Y = unpack_state(X,n)
+    [m,N] = size(X);
+    m = m/n^2;
+    Y = reshape(X,n,n,m,N);
 end
