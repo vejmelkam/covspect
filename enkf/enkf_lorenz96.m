@@ -1,4 +1,28 @@
 
+%%
+%   EnKF for lorenz 96 model 
+%
+%   Demo function - EnKF assimilation for lorenz 96 model. Only state dimension, 
+%   ensemble size, length of run and type of covariance estimation could be set.   
+%
+%
+%   [XA,YA] = enkf_lorenz96(n,N,nsteps,f_cov_est)
+%
+%
+%   YA - true state
+%   XA - mean analysis ensemble
+%   
+%   n - state size
+%   N - ensemble size
+%   nsteps - length of assimilation run
+%   f_cov_est - function for estimating forecast covariance - function
+%   handle
+%%
+
+
+
+
+
 function [XA,YA] = enkf_lorenz96(n,N,nsteps,f_cov_est)
 
     % observation operator
