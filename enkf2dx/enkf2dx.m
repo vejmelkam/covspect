@@ -14,31 +14,32 @@
 %   r - variance of observed data - covariance matrix of observed data is
 %   then r*I
 %   i - index of observed variable
-%   Q - transformation matrix
+%   Qx - transformation matrix for rows
+%   Qy - transformation matrix for columns
 %  
 %%
-function XA=enkf2dx(XF,d,r,i,Q)
-    % n - spatial dimension (must be square)
+function XA=enkf2dx(XF,d,r,i,Qx,Qy)
+    % nx,ny - grid dimension
     % N - number of ensemble members
-    [n,~,m,N] = size(XF);
+    [nx,ny,m,N] = size(XF);
     
 
     X = zeros(size(XF));
     % transform ensemble to spectral space
     for ens_ind = 1:N
         for m_ind = 1:m
-            X(:,:,m_ind,ens_ind)=Q*squeeze(XF(:,:,m_ind,ens_ind))*Q';
+            X(:,:,m_ind,ens_ind)=Qx*squeeze(XF(:,:,m_ind,ens_ind))*Qy';
         end
     end
     X = pack_state(X);
     
     % transform, pack and perturbate data to spectral space
-    D = repmat(pack_state(Q*d*Q'),1,N)+randn(n*n,N)*sqrt(r);
+    D = repmat(pack_state(Qx*d*Qy'),1,N)+randn(nx*ny,N)*sqrt(r);
     
     % i-th variable row from
-    ri_f = (i-1)*n^2+1; 
+    ri_f = (i-1)*nx*ny+1; 
     % i-th variable row to
-    ri_t = i*n^2;
+    ri_t = i*nx*ny;
     
     % diagonal approximation of covariance matrix
     E = block_cov_vec(X,m,i);
@@ -52,10 +53,10 @@ function XA=enkf2dx(XF,d,r,i,Q)
     X = X - INOV;
     
     % unpack and transform back to spatial space
-    XA = unpack_state(X,n);
+    XA = unpack_state(X,nx,ny);
     for ens_ind = 1:N
         for m_ind = 1:m
-            XA(:,:,m_ind,ens_ind)=Q'*squeeze(XA(:,:,m_ind,ens_ind))*Q;
+            XA(:,:,m_ind,ens_ind)=Qx'*squeeze(XA(:,:,m_ind,ens_ind))*Qy;
         end
     end
     XA = real(XA);

@@ -1,9 +1,9 @@
 function RMSE = enkf2dx_rmse(X,Y,Z)
-    [n,~,m,r] = size(X);
+    [nx,ny,m,r] = size(X);
     
-    X = reshape(X,n*n,m,r);
-    Y = reshape(Y,n*n,m,r);
-    Z = reshape(Z,n*n,m,r);
+    X = reshape(X,nx*ny,m,r);
+    Y = reshape(Y,nx*ny,m,r);
+    Z = reshape(Z,nx*ny,m,r);
     
     RMSE = zeros(2,m,r);
     RMSE(1,:,:) = sqrt(mean((X-Y).^2,1));

@@ -1,12 +1,11 @@
 
-
 n=32;
 nvar=3;
 N=4;
 height=4;
 dh=2;   %drop height
 dw=4;   %drop width
-rl=20;  %assimilation run length
+rl=40;  %assimilation run length
 init_steps=1000;
 ap = 100; %assimiltion period    
 Y=zeros(n,n,nvar,rl);Y(:,:,1,1)=ones(n,n)*height;
@@ -31,17 +30,31 @@ end
 ens_init = repmat(squeeze(Z(:,:,:,1)),[1 1 1 N]) + randn(n,n,nvar,N)*0.1;
 obs = squeeze(Y(:,:,1,:));
 
-AF = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx(x,y,0.1,1,fft_matrix(n)));
+F = fft_matrix(n);
+AF = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx(x,y,0.1,1,F,F));
 
-AW = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx(x,y,0.1,1,wav_matrix(n,2,'Coiflet',2)));
+W = wav_matrix(n,2,'Coiflet',2);
+AW = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx(x,y,0.1,1,W,W));
 
-enkf2dx_anim(AF,Y,AW,1);
-
+%enkf2dx_anim(AF,Y,AW,1);
+% 
 figure('name','RMSE');
 rmse = enkf2dx_rmse(AF,Y,AW);
 plot(squeeze(rmse(:,1,:))');
 legend('FFT','Wav');
 
-
+ 
+M = zeros(n,n);
+M(10,10) = 1;
+ 
+AFsg = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx_sgo(x,y,M,0.1,1,F,F));
+AWsg = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx_sgo(x,y,M,0.1,1,W,W));
+ 
+ figure('name','RMSE - subgrid observed');
+ rmse_sg = enkf2dx_rmse(AFsg,Y,AWsg);
+ plot(squeeze(rmse_sg(:,1,:))');
+ legend('FFT','Wav');
+ 
+ 
 
 

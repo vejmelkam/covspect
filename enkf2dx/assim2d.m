@@ -9,17 +9,17 @@
 
 
 function XA = assim2d(ens,obs,m_f,ass_f)
-    %   n - grid size
+    %   nx,ny - grid size
     %   nvar - number of variables
     %   rl - run length (number of assimilation cycles) 
-    [n,~,nvar,N] = size(ens);
+    [nx,ny,nvar,N] = size(ens);
     rl = size(obs,3);
-    XA = zeros(n,n,nvar,rl);
+    XA = zeros(nx,ny,nvar,rl);
     fprintf('Assimilation run, %g cycles\n',rl);
     for rl_ind = 1:rl
         fprintf('.')
         ens = ass_f(ens,squeeze(obs(:,:,rl_ind)));
-        XA(:,:,:,rl_ind)=unpack_state(mean(pack_state(ens),2),n);
+        XA(:,:,:,rl_ind)=unpack_state(mean(pack_state(ens),2),nx,ny);
         for ens_ind = 1:N
             ens(:,:,:,ens_ind) = m_f(squeeze(ens(:,:,:,ens_ind)));
         end 
