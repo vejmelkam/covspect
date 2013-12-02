@@ -1,5 +1,4 @@
-
-n=32;
+n=64;
 nvar=3;
 N=4;
 height=4;
@@ -45,7 +44,9 @@ legend('FFT','Wav');
 
  
 M = zeros(n,n);
-M(10,10) = 1;
+
+M(10:20,10:20) = 1;
+M(40:50,40:50) = 1;
  
 AFsg = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx_sgo(x,y,M,0.1,1,F,F));
 AWsg = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx_sgo(x,y,M,0.1,1,W,W));

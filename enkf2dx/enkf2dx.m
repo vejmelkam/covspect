@@ -28,13 +28,13 @@ function XA=enkf2dx(XF,d,r,i,Qx,Qy)
     % transform ensemble to spectral space
     for ens_ind = 1:N
         for m_ind = 1:m
-            X(:,:,m_ind,ens_ind)=Qx*squeeze(XF(:,:,m_ind,ens_ind))*Qy';
+            X(:,:,m_ind,ens_ind)=Qx*squeeze(XF(:,:,m_ind,ens_ind))*Qy.';
         end
     end
     X = pack_state(X);
     
     % transform, pack and perturbate data to spectral space
-    D = repmat(pack_state(Qx*d*Qy'),1,N)+randn(nx*ny,N)*sqrt(r);
+    D = repmat(pack_state(Qx*d*Qy.'),1,N)+randn(nx*ny,N)*sqrt(r);
     
     % i-th variable row from
     ri_f = (i-1)*nx*ny+1; 
@@ -56,7 +56,7 @@ function XA=enkf2dx(XF,d,r,i,Qx,Qy)
     XA = unpack_state(X,nx,ny);
     for ens_ind = 1:N
         for m_ind = 1:m
-            XA(:,:,m_ind,ens_ind)=Qx'*squeeze(XA(:,:,m_ind,ens_ind))*Qy;
+            XA(:,:,m_ind,ens_ind)=Qx'*squeeze(XA(:,:,m_ind,ens_ind))*conj(Qy);
         end
     end
     XA = real(XA);
