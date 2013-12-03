@@ -1,4 +1,4 @@
-n=64;
+n=32;
 m=3;
 N=4;
 height=4;
@@ -45,11 +45,11 @@ Z(dw/2+1:dw*1.5,dw/2+1:dw*1.5,1)=squeeze(Z(dw/2+1:dw*1.5,dw/2+1:dw*1.5,1))+dropl
         Z=waterwave2(Z,dt,dx,dy,ass_time);
 
         %  EnKF
-        XF=enkf2dx(XF,squeeze(Y(:,:,1)),0.01,1,QF);
-        XW=enkf2dx(XW,squeeze(Y(:,:,1)),0.01,1,QW);
+        XF=enkf2dx(XF,squeeze(Y(:,:,1)),0.01,1,QF,QF);
+        XW=enkf2dx(XW,squeeze(Y(:,:,1)),0.01,1,QW,QW);
         
-        XAF(:,:,:,run_ind)=unpack_state(mean(pack_state(XF),2),n);
-        XAW(:,:,:,run_ind)=unpack_state(mean(pack_state(XW),2),n);
+        XAF(:,:,:,run_ind)=unpack_state(mean(pack_state(XF),2),n,n);
+        XAW(:,:,:,run_ind)=unpack_state(mean(pack_state(XW),2),n,n);
         YA(:,:,:,run_ind)=Y;
         ZA(:,:,:,run_ind)=Z;
 
@@ -63,6 +63,8 @@ Z(dw/2+1:dw*1.5,dw/2+1:dw*1.5,1)=squeeze(Z(dw/2+1:dw*1.5,dw/2+1:dw*1.5,1))+dropl
             
             fprintf('\n');
         end
-        
  end
  
+ % animation
+ figure(1);
+ subplot
