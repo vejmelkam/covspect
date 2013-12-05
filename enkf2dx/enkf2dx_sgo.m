@@ -13,7 +13,7 @@
 %
 %   XF - forecast ensemble
 %   d - observed data (matrix) - full state 
-%   m - mask matrix, (1 - observed value, 0 - not observed)
+%   M - mask matrix, (1 - observed value, 0 - not observed)
 %   r - variance of observed data - covariance matrix of observed data is
 %   then r*I
 %   i - index of observed variable

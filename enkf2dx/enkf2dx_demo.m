@@ -1,3 +1,4 @@
+%  initialization
 n=64;
 nvar=3;
 N=4;
@@ -10,9 +11,7 @@ init_steps=1000;
 ap = 100; %assimiltion period    
 Y=zeros(n,n,nvar,rl);Y(:,:,1,1)=ones(n,n)*height;
 Z=zeros(n,n,nvar,rl);Z(:,:,1,1)=ones(n,n)*height;
-
-
-dx=1;
+x=1;
 dy=1;
 dt=0.01;
 Y(1+ds:dw+ds,1+ds:dw+ds,1,1)=squeeze(Y(1+ds:dw+ds,1+ds:dw+ds,1,1))+droplet(dh,dw);
