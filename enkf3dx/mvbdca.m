@@ -37,7 +37,7 @@
 function E = mvbdca(X,nv,i)
     [n,N] = size(X);
     assert(mod(n,nv)==0,'size(X,1) must be multiplication of nv');
-    m = n/nv;
+    m = n/nv; 
     
     %   mean 
     XM = mean(X,2);
@@ -45,11 +45,11 @@ function E = mvbdca(X,nv,i)
     X = X - repmat(XM,[1 N]);
     
     % i-th variable, row from, row to
-    iv_rf = (i-1) * nv + 1;
-    iv_rt = i*nv;
+    iv_rf = (i-1) * m + 1;
+    iv_rt = i*m;
     
     
-    C = X .* repmat(conj(X(iv_rf:iv_rt,:)),m,1);
+    C = X .* repmat(conj(X(iv_rf:iv_rt,:)),nv,1);
     
     E = 1/(N-1) * sum(C,2);
 end
