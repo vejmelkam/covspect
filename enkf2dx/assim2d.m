@@ -6,8 +6,6 @@
 %   m_f - model advance (function handle)
 %   ass_f - method of assimilation (function handle)
 
-
-
 function XA = assim2d(ens,obs,m_f,ass_f)
     %   nx,ny - grid size
     %   nvar - number of variables

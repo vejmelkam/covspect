@@ -7,7 +7,7 @@
 %   http://arxiv.org/abs/0901.3725
 %
 %
-%   function XA=enkf2dx(XF,H,d,r,f_cov_est)
+%   function XA=enkf2dx(XF,d,r,i,Qx,QY)
 %
 %   XF - forecast ensemble
 %   d - observed data (matrix)
@@ -42,15 +42,16 @@ function XA=enkf2dx(XF,d,r,i,Qx,Qy)
     ri_t = i*nx*ny;
     
     % diagonal approximation of covariance matrix
-    E = block_cov_vec(X,m,i);
+    %E = block_cov_vec(X,m,i);
+    E = mvbdca(X,nx*ny,i);
     E_i = E(ri_f:ri_t);
     
     
     % inovation
     INOV = X(ri_f:ri_t,:) - D;
-    INOV = INOV .* repmat((E_i + r).^(-1),1,N);
-    INOV = repmat(INOV,m,1) .* repmat(E,1,N);
-    X = X - INOV;
+    A = INOV .* repmat((E_i + r).^(-1),1,N);
+    B = repmat(A,m,1) .* repmat(E,1,N);
+    X = X - B;
     
     % unpack and transform back to spatial space
     XA = unpack_state(X,nx,ny);

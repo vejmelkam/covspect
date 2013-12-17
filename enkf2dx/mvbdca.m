@@ -14,7 +14,7 @@
 %
 %   usage:
 %
-%   E = mvbdca(X,m,i)
+%   E = mvbdca(X,nv,i)
 %
 %       input:
 %           X   matrix containg ensemble members in columns 
