@@ -1,5 +1,5 @@
 %  initialization
-n=64;
+n=32;
 nvar=3;
 N=4;
 height=4;
@@ -11,7 +11,7 @@ init_steps=1000;
 ap = 100; %assimiltion period    
 Y=zeros(n,n,nvar,rl);Y(:,:,1,1)=ones(n,n)*height;
 Z=zeros(n,n,nvar,rl);Z(:,:,1,1)=ones(n,n)*height;
-x=1;
+dx=1;
 dy=1;
 dt=0.01;
 Y(1+ds:dw+ds,1+ds:dw+ds,1,1)=squeeze(Y(1+ds:dw+ds,1+ds:dw+ds,1,1))+droplet(dh,dw);
@@ -21,6 +21,8 @@ Y(:,:,:,1)=waterwave2(squeeze(Y(:,:,:,1)),dt,dx,dy,init_steps);
 Z(:,:,:,1)=waterwave2(squeeze(Z(:,:,:,1)),dt,dx,dy,init_steps);
 
 
+%   Y - "true" state
+%   Z - reference and assimilation initialization
 for rl_ind = 2:rl
     Y(:,:,:,rl_ind) = waterwave2(squeeze(Y(:,:,:,rl_ind-1)),dt,dx,dy,ap);
     Z(:,:,:,rl_ind) = waterwave2(squeeze(Z(:,:,:,rl_ind-1)),dt,dx,dy,ap);
@@ -35,7 +37,7 @@ AF = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx(x,y,0.1,
 W = wav_matrix(n,2,'Coiflet',2);
 AW = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx(x,y,0.1,1,W,W));
 
-%enkf2dx_anim(AF,Y,AW,1);
+enkf2dx_anim(AF,Y,AW,1);
 % 
 figure('name','RMSE');
 rmse = enkf2dx_rmse(AF,Y,AW);
@@ -43,10 +45,11 @@ plot(squeeze(rmse(:,1,:))');
 legend('FFT','Wav');
 
  
-M = zeros(n,n);
 
-M(10:20,10:20) = 1;
-M(40:50,40:50) = 1;
+% Mask matrix
+M = zeros(n,n);
+M(2:5,2:5) = 1;
+M(20:25,20:25) = 1;
  
 AFsg = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx_sgo(x,y,M,0.1,1,F,F));
 AWsg = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx_sgo(x,y,M,0.1,1,W,W));
