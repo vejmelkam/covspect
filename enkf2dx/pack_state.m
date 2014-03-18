@@ -5,6 +5,6 @@
 %
 
 function X = pack_state(Y)
-    [n,~,m,N] = size(Y);
-    X=reshape(Y,n*n*m,N);
+    [nx,ny,m,N] = size(Y);
+    X=reshape(Y,nx*ny*m,N);
 end

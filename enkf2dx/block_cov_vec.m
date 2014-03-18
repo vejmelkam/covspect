@@ -1,6 +1,8 @@
-%%
+%%  
+%   return diagonal elements in blocks of sample covariance,
+%
 %   function E = block_cov_vec(X,m,i)
-%       X - unpacked ensemble, eensemble members in column
+%       X - packed ensemble, eensemble members in column
 %       m - number of variables in one ensemble
 %       i - index of variable, for which the covariance and cross
 %       covariances will be counted

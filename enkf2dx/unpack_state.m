@@ -4,12 +4,12 @@
 %
 % Y = unpack_state(X,n)
 %   X - packed state
-%   n - dimension of 2D spatial field
-%
+%   nx - 1st dimension of 2D spatial field
+%   ny - 2nd dimension of 2D spatial field
 %
 
-function Y = unpack_state(X,n)
+function Y = unpack_state(X,nx,ny)
     [m,N] = size(X);
-    m = m/n^2;
-    Y = reshape(X,n,n,m,N);
+    m = m/nx/ny;
+    Y = reshape(X,nx,ny,m,N);
 end
