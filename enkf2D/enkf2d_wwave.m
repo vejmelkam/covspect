@@ -1,9 +1,6 @@
 
-function [XA,YA,ZA] = enkf2d_wwave(n,N,nsteps,f_cov_est)
+function [XA,YA,ZA] = enkf2d_wwave(n,N,nsteps,H,f_cov_est)
 
-    % observation operator (applied to the unrolled state!)
-    H=eye(n*n);
-    H(n+1:end,n+1:end) = 0;
     % variance of observation
     r=0.01*ones(size(H,1),1);
     % integration time-step for water model
@@ -13,35 +10,32 @@ function [XA,YA,ZA] = enkf2d_wwave(n,N,nsteps,f_cov_est)
     height = 5;
     drop_size = 11;
     % integration steps to run between observations
-    isteps = 5;
+    isteps = 10;
     % initial run length
     init_steps = 1000;
     % initial model state & observations
     
-    % construct initial condition
+    % construct initial conditions - reference model (Y)
     Hy = ones(n) * height;
     Uy = zeros(n);
     Vy = zeros(n);
-
-    Hz = ones(n) * height;
-    Uz = zeros(n);
-    Vz = zeros(n);
-    
-    %[Hx,Ux,Vx] = waterwave(Hx,Ux,Vx,dt,dx,dy,init_steps);
     Hy(1:drop_size,1:drop_size) = Hy(1:drop_size,1:drop_size) + droplet(1,drop_size);
     [Hy,Uy,Vy] = waterwave(Hy,Uy,Vy,dt,dx,dy,init_steps);
 
+    % construct initial conditions - unassimilated model (Z)
+    Hz = ones(n) * height;
+    Uz = zeros(n);
+    Vz = zeros(n);
     Hz(4:drop_size+3,4:drop_size+3) = Hz(4:drop_size+3,4:drop_size+3) + droplet(1,drop_size);
     [Hz,Uz,Vz] = waterwave(Hz,Uz,Vz,dt,dx,dy,init_steps);
     
     % construct an ensemble of wave models
-    HX=repmat(Hz,[1 1 N])+randn(n,n,N)*0.1    ;
+    HX=repmat(Hz,[1 1 N])+randn(n,n,N)*0.01;
     UX=repmat(Uz,[1 1 N]);
     VX=repmat(Vz,[1 1 N]);
 
     %  mean analysis ensemble after data assimilation
     XA=zeros(n,n,nsteps);
-    %  observation at assimilated time
     YA=zeros(n,n,nsteps);
     ZA=zeros(n,n,nsteps);
 
@@ -64,9 +58,8 @@ function [XA,YA,ZA] = enkf2d_wwave(n,N,nsteps,f_cov_est)
         end
         
         % also, add some droplets
-        [Hy,Uy,Vy] = waterwave(Hy,Uy,Vy,dt,dx,dy,isteps);
 %        Hy(1:21,1:21) = Hy(1:21,1:21) + droplet(1,21);
-%        [Hy,Uy,Vy] = waterwave(Hy,Uy,Vy,dt,dx,dy,isteps/2);
+        [Hy,Uy,Vy] = waterwave(Hy,Uy,Vy,dt,dx,dy,isteps);
         
         [Hz,Uz,Vz] = waterwave(Hz,Uz,Vz,dt,dx,dy,isteps);
         
