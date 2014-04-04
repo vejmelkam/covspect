@@ -1,17 +1,17 @@
 %  initialization
-n=32;   %grid dimension
+n=64;   %grid dimension
 nvar=3; %number of variables foe EnKF
 N=4;    %ensemble size
 %   paramaters for shallow water equations
-height=4;   
-dh=2;   %drop height
+height=9;   
+dh=5;   %drop height
 dw=4;   %drop width
 ds=5;   %initial droplet start point
 dx=1;
 dy=1;
 dt=0.01;
 
-rl=40;  %assimilation run length
+rl=15;  %assimilation run length
 %   number of initial steps
 init_steps=1000;
 %assimiltion period
@@ -57,27 +57,34 @@ AF = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx(x,y,0.1,
 W = wav_matrix(n,2,'Coiflet',2);
 AW = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx(x,y,0.1,1,W,W));
 
-enkf2dx_anim(AF,Y,AW,1);
+%enkf2dx_anim(AF,Y,AW,1);
 % 
 figure('name','RMSE');
 rmse = enkf2dx_rmse(AF,Y,AW);
-plot(squeeze(rmse(:,1,:))');
-legend('FFT','Wav');
+plot(squeeze(rmse(:,1,:))','o-');
+xlabel('Assimilation cycle');
+ylabel('RMSE');
+legend('FFT','DWT');
 
  
 
 % Mask matrix
 M = zeros(n,n);
-M(2:5,2:5) = 1;
-M(20:25,20:25) = 1;
+M(17:48,17:48) = 1;
+%M(17:48,:) = 1;
+
+
+%M(:65,60:65) = 1;
  
 AFsg = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx_sgo(x,y,M,0.1,1,F,F));
 AWsg = assim2d(ens_init,obs,@(x) waterwave2(x,dt,dx,dy,ap),@(x,y) enkf2dx_sgo(x,y,M,0.1,1,W,W));
  
  figure('name','RMSE - subgrid observed');
  rmse_sg = enkf2dx_rmse(AFsg,Y,AWsg);
- plot(squeeze(rmse_sg(:,1,:))');
- legend('FFT','Wav');
+ plot(squeeze(rmse_sg(:,1,:))','o-');
+ xlabel('Assimilation cycle');
+ ylabel('RMSE');
+ legend('FFT','DWT');
  
  
 
